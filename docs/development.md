@@ -35,12 +35,38 @@ it that way when adding features.
 
 ## Tests
 
+Two layers, and you want both before trusting a change.
+
+### Unit tests — the core
+
 ```console
 pytest
 ruff check .
 ```
 
-The suite needs no display.
+Fast, needs no display, covers `renderer`, `tree`, `search`, `scaffold`, `cli`, and
+`runtime`.
+
+### GUI check — the window
+
+```console
+python scripts/gui_smoke.py            # defaults to ./docs
+python scripts/gui_smoke.py path/to/docs
+python scripts/gui_smoke.py docs --show   # watch it happen in a real window
+```
+
+Builds the actual `MainWindow` and drives it: sidebar, rendering, search, theme
+toggling, live reload against a real file on disk (restored afterwards), and
+navigation.
+
+**It clicks links by executing JavaScript in the page, not by calling the handlers.**
+That distinction is the whole point. Calling `acceptNavigationRequest` directly runs it
+outside Qt's navigation machinery, where loading a new document is harmless. A genuine
+click runs it *during* navigation, where re-entering the page with `setHtml()` crashes
+the renderer outright — a crash a handler-level test passes straight through. If you
+touch link handling, run this script.
+
+Exit code 0 means everything passed.
 
 ## Assets
 

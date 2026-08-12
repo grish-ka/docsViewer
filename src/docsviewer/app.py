@@ -69,7 +69,12 @@ class DocPage(QWebEnginePage):
             path = Path(url.toLocalFile())
             anchor = url.fragment() or None
             if is_markdown(path):
-                self._window.open_document(path, anchor=anchor)
+                # Load on the next event-loop pass, never from inside this
+                # callback: Qt is still processing the navigation we are refusing,
+                # and re-entering the page with setHtml() crashes the renderer.
+                QTimer.singleShot(
+                    0, lambda p=path, a=anchor: self._window.open_document(p, anchor=a)
+                )
             elif path.exists():
                 QDesktopServices.openUrl(url)
             else:

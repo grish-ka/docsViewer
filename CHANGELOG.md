@@ -7,6 +7,20 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Clicking a link in a document crashed the application.** `acceptNavigationRequest`
+  loaded the target with `setHtml()` while Qt was still processing the navigation it was
+  refusing; re-entering the page that way terminates the render process
+  (`0x80000003`). The load is now deferred to the next event-loop pass.
+
+### Added
+
+- `scripts/gui_smoke.py` — an end-to-end check that drives the real window, clicking
+  links via JavaScript in the page rather than calling the handlers. The crash above
+  survived handler-level testing precisely because a direct call runs outside Qt's
+  navigation machinery; only a genuine click reproduces it.
+
 ## [1.0.0] — 2026-08-12
 
 First release.
