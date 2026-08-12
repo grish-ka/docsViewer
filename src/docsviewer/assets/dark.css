@@ -1,0 +1,16 @@
+/* Dark colour tokens. */
+:root {
+  --dv-bg: #0d1117;
+  --dv-fg: #e6edf3;
+  --dv-muted: #9198a1;
+  --dv-link: #4493f8;
+  --dv-border: #2f3742;
+  --dv-border-strong: #3d4550;
+  --dv-subtle-bg: #161b22;
+  --dv-code-bg: #21262d;
+  --dv-code-fg: #e6edf3;
+  --dv-pre-bg: #161b22;
+  --dv-mark-bg: #5a4a12;
+  --dv-mark-fg: #f5e6a8;
+  --dv-selection: #1f4b7a;
+}

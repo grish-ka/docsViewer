@@ -1,0 +1,16 @@
+/* Light colour tokens. */
+:root {
+  --dv-bg: #ffffff;
+  --dv-fg: #1f2328;
+  --dv-muted: #59636e;
+  --dv-link: #0969da;
+  --dv-border: #d1d9e0;
+  --dv-border-strong: #b7c0c9;
+  --dv-subtle-bg: #f6f8fa;
+  --dv-code-bg: #eff1f3;
+  --dv-code-fg: #1f2328;
+  --dv-pre-bg: #f6f8fa;
+  --dv-mark-bg: #fff3c4;
+  --dv-mark-fg: #1f2328;
+  --dv-selection: #b6dcfe;
+}

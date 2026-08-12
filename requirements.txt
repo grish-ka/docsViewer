@@ -1,0 +1,8 @@
+# Runtime dependencies. Source of truth for packaging is pyproject.toml
+# ([project.dependencies]) -- keep these two in sync.
+PySide6>=6.7
+markdown-it-py>=3.0
+linkify-it-py>=2.0     # backs the 'linkify' option (bare URLs become links)
+mdit-py-plugins>=0.4
+Pygments>=2.17
+watchdog>=4.0

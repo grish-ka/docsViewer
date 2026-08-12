@@ -1,0 +1,113 @@
+name: CD
+
+# Continuous delivery: builds and publishes to PyPI.
+#
+# Triggered by publishing a GitHub Release, or run manually to push to TestPyPI
+# first. Uses PyPI Trusted Publishing (OIDC) -- no API token is stored in this
+# repository. See docs/development.md for the one-time PyPI setup.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Where to publish
+        required: true
+        default: testpypi
+        type: choice
+        options: [testpypi, pypi]
+
+jobs:
+  build:
+    name: build distributions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install build tooling
+        run: python -m pip install --upgrade pip build twine
+
+      - name: Check the tag matches __version__
+        # Only meaningful for release triggers; a mismatch here means a release
+        # tagged v1.2.0 would upload 1.1.0 to PyPI under the wrong name.
+        if: github.event_name == 'release'
+        run: |
+          python - <<'PY'
+          import os, re, sys, pathlib
+
+          source = pathlib.Path("src/docsviewer/__init__.py").read_text(encoding="utf-8")
+          version = re.search(r'__version__ = "([^"]+)"', source).group(1)
+          tag = os.environ["TAG"].lstrip("v")
+
+          if version != tag:
+              sys.exit(f"Tag {tag!r} does not match __version__ {version!r}")
+          print(f"version {version} matches tag")
+          PY
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+
+      - name: Build
+        run: python -m build
+
+      - name: Check metadata
+        run: twine check dist/*
+
+      - name: Verify packaged data
+        run: |
+          python - <<'PY'
+          import sys, zipfile, glob
+
+          names = zipfile.ZipFile(glob.glob("dist/*.whl")[0]).namelist()
+          required = ["docsviewer/assets/base.css", "docsviewer/docs/README.md"]
+          missing = [item for item in required if item not in names]
+          if missing:
+              sys.exit("Wheel is missing: " + ", ".join(missing))
+          print("packaged data OK")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: distributions
+          path: dist/
+
+  testpypi:
+    name: publish to TestPyPI
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && inputs.target == 'testpypi'
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/docsviewer
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: distributions
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  pypi:
+    name: publish to PyPI
+    needs: build
+    if: github.event_name == 'release' || inputs.target == 'pypi'
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/docsviewer
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: distributions
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1

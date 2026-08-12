@@ -1,0 +1,86 @@
+/* Pygments 'github-dark' -- generated, do not edit by hand. */
+pre { line-height: 125%; }
+td.linenos .normal { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #6e7681; background-color: #0d1117; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #e6edf3; background-color: #6e7681; padding-left: 5px; padding-right: 5px; }
+.markdown-body pre .hll { background-color: #6e7681 }
+.markdown-body pre .c { color: #8B949E; font-style: italic } /* Comment */
+.markdown-body pre .err { color: #F85149 } /* Error */
+.markdown-body pre .esc { color: #E6EDF3 } /* Escape */
+.markdown-body pre .g { color: #E6EDF3 } /* Generic */
+.markdown-body pre .k { color: #FF7B72 } /* Keyword */
+.markdown-body pre .l { color: #A5D6FF } /* Literal */
+.markdown-body pre .n { color: #E6EDF3 } /* Name */
+.markdown-body pre .o { color: #FF7B72; font-weight: bold } /* Operator */
+.markdown-body pre .x { color: #E6EDF3 } /* Other */
+.markdown-body pre .p { color: #E6EDF3 } /* Punctuation */
+.markdown-body pre .ch { color: #8B949E; font-style: italic } /* Comment.Hashbang */
+.markdown-body pre .cm { color: #8B949E; font-style: italic } /* Comment.Multiline */
+.markdown-body pre .cp { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Preproc */
+.markdown-body pre .cpf { color: #8B949E; font-style: italic } /* Comment.PreprocFile */
+.markdown-body pre .c1 { color: #8B949E; font-style: italic } /* Comment.Single */
+.markdown-body pre .cs { color: #8B949E; font-weight: bold; font-style: italic } /* Comment.Special */
+.markdown-body pre .gd { color: #FFA198; background-color: #490202 } /* Generic.Deleted */
+.markdown-body pre .ge { color: #E6EDF3; font-style: italic } /* Generic.Emph */
+.markdown-body pre .ges { color: #E6EDF3; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.markdown-body pre .gr { color: #FFA198 } /* Generic.Error */
+.markdown-body pre .gh { color: #79C0FF; font-weight: bold } /* Generic.Heading */
+.markdown-body pre .gi { color: #56D364; background-color: #0F5323 } /* Generic.Inserted */
+.markdown-body pre .go { color: #8B949E } /* Generic.Output */
+.markdown-body pre .gp { color: #8B949E } /* Generic.Prompt */
+.markdown-body pre .gs { color: #E6EDF3; font-weight: bold } /* Generic.Strong */
+.markdown-body pre .gu { color: #79C0FF } /* Generic.Subheading */
+.markdown-body pre .gt { color: #FF7B72 } /* Generic.Traceback */
+.markdown-body pre .g-Underline { color: #E6EDF3; text-decoration: underline } /* Generic.Underline */
+.markdown-body pre .kc { color: #79C0FF } /* Keyword.Constant */
+.markdown-body pre .kd { color: #FF7B72 } /* Keyword.Declaration */
+.markdown-body pre .kn { color: #FF7B72 } /* Keyword.Namespace */
+.markdown-body pre .kp { color: #79C0FF } /* Keyword.Pseudo */
+.markdown-body pre .kr { color: #FF7B72 } /* Keyword.Reserved */
+.markdown-body pre .kt { color: #FF7B72 } /* Keyword.Type */
+.markdown-body pre .ld { color: #79C0FF } /* Literal.Date */
+.markdown-body pre .m { color: #A5D6FF } /* Literal.Number */
+.markdown-body pre .s { color: #A5D6FF } /* Literal.String */
+.markdown-body pre .na { color: #E6EDF3 } /* Name.Attribute */
+.markdown-body pre .nb { color: #E6EDF3 } /* Name.Builtin */
+.markdown-body pre .nc { color: #F0883E; font-weight: bold } /* Name.Class */
+.markdown-body pre .no { color: #79C0FF; font-weight: bold } /* Name.Constant */
+.markdown-body pre .nd { color: #D2A8FF; font-weight: bold } /* Name.Decorator */
+.markdown-body pre .ni { color: #FFA657 } /* Name.Entity */
+.markdown-body pre .ne { color: #F0883E; font-weight: bold } /* Name.Exception */
+.markdown-body pre .nf { color: #D2A8FF; font-weight: bold } /* Name.Function */
+.markdown-body pre .nl { color: #79C0FF; font-weight: bold } /* Name.Label */
+.markdown-body pre .nn { color: #FF7B72 } /* Name.Namespace */
+.markdown-body pre .nx { color: #E6EDF3 } /* Name.Other */
+.markdown-body pre .py { color: #79C0FF } /* Name.Property */
+.markdown-body pre .nt { color: #7EE787 } /* Name.Tag */
+.markdown-body pre .nv { color: #79C0FF } /* Name.Variable */
+.markdown-body pre .ow { color: #FF7B72; font-weight: bold } /* Operator.Word */
+.markdown-body pre .pm { color: #E6EDF3 } /* Punctuation.Marker */
+.markdown-body pre .w { color: #6E7681 } /* Text.Whitespace */
+.markdown-body pre .mb { color: #A5D6FF } /* Literal.Number.Bin */
+.markdown-body pre .mf { color: #A5D6FF } /* Literal.Number.Float */
+.markdown-body pre .mh { color: #A5D6FF } /* Literal.Number.Hex */
+.markdown-body pre .mi { color: #A5D6FF } /* Literal.Number.Integer */
+.markdown-body pre .mo { color: #A5D6FF } /* Literal.Number.Oct */
+.markdown-body pre .sa { color: #79C0FF } /* Literal.String.Affix */
+.markdown-body pre .sb { color: #A5D6FF } /* Literal.String.Backtick */
+.markdown-body pre .sc { color: #A5D6FF } /* Literal.String.Char */
+.markdown-body pre .dl { color: #79C0FF } /* Literal.String.Delimiter */
+.markdown-body pre .sd { color: #A5D6FF } /* Literal.String.Doc */
+.markdown-body pre .s2 { color: #A5D6FF } /* Literal.String.Double */
+.markdown-body pre .se { color: #79C0FF } /* Literal.String.Escape */
+.markdown-body pre .sh { color: #79C0FF } /* Literal.String.Heredoc */
+.markdown-body pre .si { color: #A5D6FF } /* Literal.String.Interpol */
+.markdown-body pre .sx { color: #A5D6FF } /* Literal.String.Other */
+.markdown-body pre .sr { color: #79C0FF } /* Literal.String.Regex */
+.markdown-body pre .s1 { color: #A5D6FF } /* Literal.String.Single */
+.markdown-body pre .ss { color: #A5D6FF } /* Literal.String.Symbol */
+.markdown-body pre .bp { color: #E6EDF3 } /* Name.Builtin.Pseudo */
+.markdown-body pre .fm { color: #D2A8FF; font-weight: bold } /* Name.Function.Magic */
+.markdown-body pre .vc { color: #79C0FF } /* Name.Variable.Class */
+.markdown-body pre .vg { color: #79C0FF } /* Name.Variable.Global */
+.markdown-body pre .vi { color: #79C0FF } /* Name.Variable.Instance */
+.markdown-body pre .vm { color: #79C0FF } /* Name.Variable.Magic */
+.markdown-body pre .il { color: #A5D6FF } /* Literal.Number.Integer.Long */

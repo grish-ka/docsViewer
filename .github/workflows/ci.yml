@@ -1,0 +1,114 @@
+name: CI
+
+# Continuous integration: lint, test, and prove the distributions are sound.
+#
+# Runs on every pull request (feature branches are developed and reviewed via PRs)
+# and on pushes to the default branch. Pushes to a PR branch are covered by the
+# pull_request trigger, so they are not built twice.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test (${{ matrix.os }}, py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        include:
+          - os: windows-latest
+            python-version: "3.12"
+          - os: macos-latest
+            python-version: "3.12"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Test
+        # The test suite imports no Qt, so it runs without a display.
+        run: pytest -q
+
+  build:
+    name: build distributions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Build
+        run: |
+          python -m pip install --upgrade pip build twine
+          python -m build
+
+      - name: Check metadata
+        run: twine check dist/*
+
+      - name: Verify packaged data
+        # assets/ and docs/ are loaded via importlib.resources at runtime. A wheel
+        # missing them installs cleanly and then fails when you use it, so fail here
+        # instead.
+        run: |
+          python - <<'PY'
+          import sys, zipfile, glob
+
+          wheel = glob.glob("dist/*.whl")[0]
+          names = zipfile.ZipFile(wheel).namelist()
+
+          required = [
+              "docsviewer/assets/base.css",
+              "docsviewer/assets/light.css",
+              "docsviewer/assets/dark.css",
+              "docsviewer/docs/README.md",
+          ]
+          missing = [item for item in required if item not in names]
+          if missing:
+              print("Wheel is missing required data files:", *missing, sep="\n  ")
+              sys.exit(1)
+
+          docs = [n for n in names if n.startswith("docsviewer/docs/")]
+          print(f"{wheel}: OK ({len(docs)} bundled docs)")
+          PY
+
+      - name: Smoke test the built wheel
+        # Install the real artifact and confirm `init` can find its bundled docs.
+        run: |
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install --quiet dist/*.whl
+          /tmp/clean/bin/docsviewer --version
+          mkdir -p /tmp/scaffold-test
+          /tmp/clean/bin/docsviewer init /tmp/scaffold-test
+          test -f /tmp/scaffold-test/docs/README.md
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: distributions
+          path: dist/
