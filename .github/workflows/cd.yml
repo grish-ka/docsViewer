@@ -64,7 +64,7 @@ jobs:
           import sys, zipfile, glob
 
           names = zipfile.ZipFile(glob.glob("dist/*.whl")[0]).namelist()
-          required = ["docsviewer/assets/base.css", "docsviewer/docs/README.md"]
+          required = ["docsviewer/assets/base.css", "docsviewer/templates/README.md"]
           missing = [item for item in required if item not in names]
           if missing:
               sys.exit("Wheel is missing: " + ", ".join(missing))

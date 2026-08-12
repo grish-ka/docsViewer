@@ -54,6 +54,10 @@ Skipped entirely: `.git`, `.venv`, `venv`, `env`, `node_modules`, `__pycache__`,
 Folders with no Markdown anywhere beneath them are hidden, so asset directories stay out
 of the way.
 
+A scan also stops at 10 levels deep, 5,000 directories, or 2,000 Markdown files —
+whichever comes first. These are ceilings against a mis-aimed folder, not a budget you
+need to think about: a docs tree that reaches them is one no reader could navigate.
+
 ## Links
 
 Relative links resolve against the file they're written in:
