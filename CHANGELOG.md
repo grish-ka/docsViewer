@@ -7,20 +7,6 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Fixed
-
-- **Clicking a link in a document crashed the application.** `acceptNavigationRequest`
-  loaded the target with `setHtml()` while Qt was still processing the navigation it was
-  refusing; re-entering the page that way terminates the render process
-  (`0x80000003`). The load is now deferred to the next event-loop pass.
-
-### Added
-
-- `scripts/gui_smoke.py` — an end-to-end check that drives the real window, clicking
-  links via JavaScript in the page rather than calling the handlers. The crash above
-  survived handler-level testing precisely because a direct call runs outside Qt's
-  navigation machinery; only a genuine click reproduces it.
-
 ## [1.0.0] — 2026-08-12
 
 First release.
@@ -69,6 +55,9 @@ First release.
   report two — so running from a terminal leaves that terminal alone.
 - Documentation in `docs/`, covering commands, the interface, writing docs,
   configuration, troubleshooting, and development.
+- `scripts/gui_smoke.py` — an end-to-end check that builds the real window and drives
+  it: sidebar, rendering, search, theme toggling, live reload against a real file, and
+  navigation driven by clicking links via JavaScript in the page.
 
 ### Notes
 
@@ -78,6 +67,12 @@ First release.
 - A directory resolves to its `docs/` subfolder when it has one. Because nearly every
   project has a root `README.md`, keying the decision off "does this folder contain
   Markdown" would have meant `docs/` almost never won.
+- Link clicks are dispatched on the next event-loop pass rather than handled inline.
+  Loading a document from inside `acceptNavigationRequest` re-enters the page while Qt
+  is still processing that navigation, which terminates the render process. Keep the
+  deferral if you touch link handling — and exercise it with `scripts/gui_smoke.py`,
+  since calling the handler directly runs outside the navigation machinery and cannot
+  reproduce the fault.
 
 [Unreleased]: https://github.com/grish-ka/docsViewer/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/grish-ka/docsViewer/releases/tag/v1.0.0
