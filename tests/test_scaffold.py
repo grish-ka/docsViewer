@@ -26,10 +26,27 @@ def test_template_root_is_a_real_docs_folder():
     assert (root / "README.md").is_file()
 
 
-def test_bundled_docs_are_discovered():
+def test_bundled_templates_are_discovered():
     names = {path.name for path in iter_template_files()}
 
-    assert {"README.md", "changelog.md", "commands.md"} <= names
+    assert {"README.md", "getting-started.md", "changelog.md", "api.md"} <= names
+
+
+def test_templates_are_a_skeleton_not_docsviewers_own_manual():
+    """A new project must not inherit pages describing the viewer."""
+    text = (template_root() / "README.md").read_text(encoding="utf-8")
+
+    assert "{{project_name}}" in text
+    assert "docsviewer" not in text.lower()
+
+
+def test_changelog_template_carries_real_boilerplate():
+    """The one page where generic content is genuinely reusable."""
+    text = (template_root() / "changelog.md").read_text(encoding="utf-8")
+
+    assert "Keep a Changelog" in text
+    assert "Semantic Versioning" in text
+    assert "[Unreleased]" in text
 
 
 def test_iter_template_files_sorts_shallowest_first(tmp_path):

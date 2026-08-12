@@ -1,8 +1,11 @@
 """The `docsviewer init` command: create a docs/ folder in a project.
 
-The source content is docsviewer's own `docs/` folder -- there is no separate
-templates directory, so the shipped manual and what `init` writes cannot drift
-apart. Runs headless: no Qt import here, so it works over SSH and in scripts.
+Writes a skeleton for the target project to fill in -- headings and structure,
+with real boilerplate only where it is genuinely reusable (the changelog). It
+deliberately does NOT copy docsviewer's own `docs/`: those pages describe the
+viewer, and a new project inheriting them starts out documenting the wrong thing.
+
+Runs headless: no Qt import here, so it works over SSH and in scripts.
 """
 
 from __future__ import annotations
@@ -12,7 +15,7 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
-DOCS_PACKAGE_DIR = "docs"
+TEMPLATE_PACKAGE_DIR = "templates"
 
 MARKDOWN_SUFFIXES = frozenset({".md", ".markdown", ".mdown", ".mkd"})
 
@@ -29,26 +32,21 @@ class ScaffoldResult:
 
 
 def template_root() -> Path:
-    """Locate the docs folder that `init` copies.
+    """Locate the template folder that `init` copies.
 
-    Installed from a wheel this is `docsviewer/docs/`. From a source checkout that
-    directory does not exist, so fall back to the repository's own `docs/` -- the
-    same files, one level up from the package.
+    It lives inside the package, so the same path resolves whether docsviewer was
+    installed from a wheel or from a source checkout.
     """
-    packaged = resources.files("docsviewer") / DOCS_PACKAGE_DIR
+    packaged = resources.files("docsviewer") / TEMPLATE_PACKAGE_DIR
     try:
         if packaged.is_dir():
             return Path(str(packaged))
     except (OSError, TypeError):  # pragma: no cover - exotic loaders
         pass
 
-    checkout = Path(__file__).resolve().parent.parent.parent / DOCS_PACKAGE_DIR
-    if checkout.is_dir():
-        return checkout
-
     raise TemplateSourceMissing(
-        "Could not find the bundled docs folder. This usually means the package was "
-        "built without its data files; reinstall docsviewer."
+        "Could not find the bundled templates folder. This usually means the package "
+        "was built without its data files; reinstall docsviewer."
     )
 
 

@@ -1,6 +1,8 @@
+from pathlib import Path
+
 import pytest
 
-from docsviewer.cli import main, resolve_target
+from docsviewer.cli import is_unsafe_scan_root, main, resolve_target
 
 
 def write(path, text="# Doc"):
@@ -89,6 +91,71 @@ def test_cwd_docs_folder_is_found(tmp_path, monkeypatch):
 def test_no_markdown_anywhere_returns_none(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     assert resolve_target(None) == (None, None)
+
+
+# -- home / root directories are never auto-scanned --------------------
+
+
+def test_home_directory_is_an_unsafe_scan_root():
+    assert is_unsafe_scan_root(Path.home()) is True
+
+
+def test_ancestors_of_home_are_unsafe():
+    parent = Path.home().parent
+    assert is_unsafe_scan_root(parent) is True
+
+
+def test_filesystem_root_is_unsafe():
+    assert is_unsafe_scan_root(Path(Path.cwd().anchor)) is True
+
+
+def test_a_project_directory_is_a_safe_scan_root(tmp_path):
+    assert is_unsafe_scan_root(tmp_path) is False
+
+
+def test_home_directory_does_not_fall_back_to_scanning(tmp_path, monkeypatch):
+    """The reported bug: running in a home directory walked the whole profile."""
+    fake_home = tmp_path / "home"
+    write(fake_home / "notes.md")  # markdown present, but must NOT be scanned
+    monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
+    monkeypatch.chdir(fake_home)
+
+    assert resolve_target(None) == (None, None)
+
+
+def test_home_directory_still_uses_its_docs_folder(tmp_path, monkeypatch):
+    """A docs/ folder is cheap and specific, so it is still honoured."""
+    fake_home = tmp_path / "home"
+    write(fake_home / "notes.md")
+    write(fake_home / "docs" / "README.md")
+    monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
+    monkeypatch.chdir(fake_home)
+
+    root, _ = resolve_target(None)
+
+    assert root == (fake_home / "docs").resolve()
+
+
+def test_here_flag_overrides_the_home_guard(tmp_path, monkeypatch):
+    fake_home = tmp_path / "home"
+    write(fake_home / "notes.md")
+    monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
+    monkeypatch.chdir(fake_home)
+
+    root, _ = resolve_target(None, here=True)
+
+    assert root == fake_home.resolve()
+
+
+def test_an_explicit_path_is_still_honoured(tmp_path, monkeypatch):
+    """The guard only withholds the automatic fallback, not a deliberate request."""
+    fake_home = tmp_path / "home"
+    write(fake_home / "notes.md")
+    monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
+
+    root, _ = resolve_target(str(fake_home))
+
+    assert root == fake_home.resolve()
 
 
 def test_init_subcommand_scaffolds(tmp_path, capsys):

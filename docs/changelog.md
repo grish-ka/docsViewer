@@ -7,6 +7,28 @@ a **major** bump breaks existing usage, a **minor** bump adds features compatibl
 
 The full itemised list lives in `CHANGELOG.md` at the repository root.
 
+## 1.1.0 — 2026-08-12
+
+### Opening a folder is safer
+
+Running `docsviewer` in your home directory used to treat the whole profile as a docs
+folder: it walked every directory, read every Markdown file it found into the search
+index, and watched all of it for changes. Home directories, their parents, and drive
+roots are no longer picked up automatically — you get the folder picker instead. A
+`docs/` subfolder in one of those places still works, and `--here` still opens them on
+purpose.
+
+Scans are also capped at 10 levels, 5,000 directories, and 2,000 files, so a
+mis-typed path can't run away either.
+
+### `init` writes a skeleton again
+
+New projects get headings and `TODO` markers to fill in, rather than a copy of
+docsviewer's own manual. `--title` puts your project's name through the pages again.
+
+`changelog.md` still arrives complete — the Keep a Changelog and Semantic Versioning
+conventions are the same everywhere, so there's nothing to invent.
+
 ## 1.0.0 — 2026-08-12
 
 First release. Everything below is new.

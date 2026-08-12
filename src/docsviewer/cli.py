@@ -35,6 +35,25 @@ def _has_markdown(folder: Path) -> bool:
     return False
 
 
+def is_unsafe_scan_root(path: Path) -> bool:
+    """True for folders far too broad to treat as a docs folder.
+
+    Your home directory, anything above it, and a filesystem or drive root. Falling
+    back to "scan the current folder" in one of these walks the whole profile or
+    disk, indexes every Markdown file found, and watches all of it recursively.
+    An explicit path or --here still opens them; only the automatic fallback is
+    withheld.
+    """
+    path = Path(path).resolve()
+    if path == Path(path.anchor):  # C:\ or /
+        return True
+    try:
+        home = Path.home().resolve()
+    except (OSError, RuntimeError):  # pragma: no cover - no home directory
+        return False
+    return path == home or path in home.parents
+
+
 def _docs_subfolder(path: Path) -> Path | None:
     """Return `<path>/docs` when it exists and holds Markdown."""
     nested = path / DOCS_DIRNAME
@@ -72,7 +91,11 @@ def resolve_target(raw: str | None, *, here: bool = False) -> tuple[Path | None,
         nested = _docs_subfolder(cwd)
         if nested is not None:
             return nested, None
-    if _has_markdown(cwd):
+    # Only fall back to "browse the current folder" when that folder is a
+    # plausible project directory. In a home directory or a drive root it is not,
+    # and scanning one is expensive enough to look like a hang. `--here` is an
+    # explicit request, so it opts back in.
+    if (here or not is_unsafe_scan_root(cwd)) and _has_markdown(cwd):
         return cwd, None
     return None, None
 
@@ -107,8 +130,17 @@ def _cmd_view(argv: list[str]) -> int:
         return 2  # unreachable; parser.error exits
 
     if root is None:
+        cwd = Path.cwd()
+        if is_unsafe_scan_root(cwd):
+            reason = (
+                f"{cwd} is a home or root directory, so it is not scanned for Markdown "
+                f"— only its ./{DOCS_DIRNAME} folder would be used.\n"
+                "Pass --here to browse it anyway."
+            )
+        else:
+            reason = f"No Markdown found in {cwd} or ./{DOCS_DIRNAME}."
         print(
-            f"No Markdown found in {Path.cwd()} or ./{DOCS_DIRNAME}.\n"
+            f"{reason}\n"
             "Opening a folder picker — or run 'docsviewer init' to create a docs folder.",
             file=sys.stderr,
         )

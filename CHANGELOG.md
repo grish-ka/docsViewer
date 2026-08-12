@@ -7,6 +7,35 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-08-12
+
+### Fixed
+
+- **Running `docsviewer` in a home directory scanned the entire user profile.** With no
+  `docs/` folder present, the viewer fell back to "browse the current folder", which
+  walked every directory beneath it, read every Markdown file found into the search
+  index, and placed a recursive filesystem watch over all of it. On a real profile that
+  is thousands of unrelated files and looks like a hang. Home directories, their
+  ancestors, and drive or filesystem roots are no longer adopted automatically; the
+  folder picker opens instead. A `docs/` subfolder in such a location is still used, and
+  `--here` or an explicit path still opens them deliberately.
+- Folder scans are now bounded — 10 levels deep, 5,000 directories, 2,000 Markdown files
+  — so even a deliberately mis-aimed root stays responsive instead of running away. Real
+  docs folders are orders of magnitude below these limits.
+
+### Changed
+
+- **`init` writes a skeleton again instead of copying docsviewer's own documentation.**
+  1.0.0 shipped the manual as the scaffold so the two could not drift apart. That traded
+  one problem for a worse one: every new project began life with pages describing the
+  viewer rather than itself, and `--title` had no placeholders left to substitute. New
+  projects now get headings and `TODO` markers to fill in, and `--title` works again.
+- `changelog.md` remains complete rather than a skeleton — the Keep a Changelog and
+  Semantic Versioning conventions are identical across projects, so there is nothing for
+  the author to invent.
+- The wheel no longer bundles docsviewer's `docs/` folder; it ships
+  `docsviewer/templates/` instead.
+
 ## [1.0.0] — 2026-08-12
 
 First release.
@@ -74,5 +103,6 @@ First release.
   since calling the handler directly runs outside the navigation machinery and cannot
   reproduce the fault.
 
-[Unreleased]: https://github.com/grish-ka/docsViewer/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/grish-ka/docsViewer/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/grish-ka/docsViewer/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/grish-ka/docsViewer/releases/tag/v1.0.0

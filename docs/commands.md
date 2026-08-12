@@ -46,6 +46,21 @@ my-project/
 
 When you *do* want the folder itself — to browse a repository root, say — pass `--here`.
 
+### Home and root directories
+
+Your home directory, anything above it, and a drive or filesystem root are never scanned
+automatically. Running `docsviewer` in `C:\Users\you` opens the folder picker rather than
+treating your whole profile as a docs folder — which would mean walking every directory
+in it, reading every Markdown file into the search index, and watching the lot for
+changes.
+
+A `docs/` subfolder there is still honoured, since that is cheap and unambiguous. To
+browse such a folder deliberately, pass `--here` or name it explicitly.
+
+Every scan is also bounded — 10 levels deep, 5,000 directories, 2,000 Markdown files —
+so even a deliberate one stays responsive. Real docs folders are nowhere near these
+limits.
+
 ## `init`
 
 ```console
@@ -57,16 +72,27 @@ Creates a `docs/` folder with starter documentation.
 | Argument | Effect |
 | --- | --- |
 | `PATH` | Project directory to scaffold into (default: current directory) |
-| `--title NAME` | Replaces `{{project_name}}` placeholders (default: the folder's name) |
+| `--title NAME` | Project name written into the pages (default: the folder's name) |
 | `--force` | Overwrite files that already exist |
 
-The pages `init` writes are a copy of docsviewer's own documentation — the same pages
-you're reading. They describe the viewer, so treat them as a starting skeleton to
-overwrite with your project's content, not as text about your project.
+It writes a **skeleton**, not prose: headings and structure with `TODO` markers for you
+to fill in.
 
-`--title` and `{{date}}` are substituted during the copy wherever those placeholders
-appear. The bundled pages contain none, so `--title` has no visible effect on them; it
-matters if you replace the pages with templates of your own.
+```
+docs/
+├── README.md            index — contents list, one-line summary
+├── getting-started.md   requirements, install, usage
+├── changelog.md         ready to use as-is
+└── reference/
+    └── api.md           a table and an example to adapt
+```
+
+`changelog.md` is the exception — it arrives complete, with the Keep a Changelog and
+Semantic Versioning conventions written out and an `[Unreleased]` section ready for your
+first entry. That boilerplate is genuinely the same for every project; the rest is not.
+
+`--title` fills the `{{project_name}}` placeholders throughout, and `{{date}}` becomes
+today's date in the changelog.
 
 ```console
 docsviewer init

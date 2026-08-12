@@ -10,6 +10,19 @@ wrong directory, or the files are in a folder on the
 Use **Open Folder…** (`Ctrl+O`) to pick the right one, or run `docsviewer init` to create
 a docs folder.
 
+## It opened a folder picker in my home directory
+
+Deliberate. Home directories, anything above them, and drive roots are never scanned
+automatically — treating your whole profile as a docs folder means walking every
+directory in it, reading every Markdown file into the search index, and watching all of
+it for changes.
+
+Open the folder you actually meant, or force it:
+
+```console
+docsviewer --here
+```
+
 ## It opened the wrong folder
 
 Running `docsviewer` in a project root opens `./docs` rather than the root itself. That's

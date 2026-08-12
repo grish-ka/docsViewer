@@ -15,8 +15,10 @@ pip install -e .
 
 ```
 docsViewer/
-├── docs/                     these pages — also the source `init` copies
+├── docs/                     these pages (docsviewer's own manual)
+├── scripts/gui_smoke.py      end-to-end GUI check
 ├── src/docsviewer/
+│   ├── templates/            the skeleton `init` copies into new projects
 │   ├── cli.py                argument parsing, path resolution
 │   ├── app.py                main window, sidebar, web view
 │   ├── renderer.py           Markdown -> styled HTML
@@ -92,14 +94,20 @@ with a white sidebar.
 
 ## How `init` gets its content
 
-There is no separate templates directory. `init` copies **this `docs/` folder**, which
-is bundled into the wheel at `docsviewer/docs/`. One folder is both the manual and the
-scaffold, so the documentation can't drift out of sync with what new projects receive.
+From `src/docsviewer/templates/`, copied recursively with `{{project_name}}` and
+`{{date}}` substituted. Because the folder sits inside the package, the same path
+resolves from a wheel and from a source checkout — no fallback needed.
 
-When running from a source checkout, the packaged copy doesn't exist, so `scaffold.py`
-falls back to the repository's `docs/` directory. Both paths are covered by tests.
+The templates are a **skeleton**: headings and `TODO` markers, plus a complete changelog
+(that boilerplate is the same for every project; nothing else is).
 
-`{{project_name}}` and `{{date}}` are substituted during the copy if present.
+1.0.0 briefly copied docsviewer's own `docs/` instead, on the theory that one folder
+serving as both manual and scaffold couldn't drift. It removed the drift and introduced
+a worse problem: every scaffolded project began life documenting the viewer rather than
+itself, and `--title` had nothing to substitute. Keep the two separate.
+
+Adding a template is just adding a file — `iter_template_files()` discovers whatever is
+there.
 
 ## Branching
 
