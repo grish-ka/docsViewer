@@ -87,15 +87,16 @@ jobs:
               "docsviewer/assets/base.css",
               "docsviewer/assets/light.css",
               "docsviewer/assets/dark.css",
-              "docsviewer/docs/README.md",
+              "docsviewer/templates/README.md",
+              "docsviewer/templates/changelog.md",
           ]
           missing = [item for item in required if item not in names]
           if missing:
               print("Wheel is missing required data files:", *missing, sep="\n  ")
               sys.exit(1)
 
-          docs = [n for n in names if n.startswith("docsviewer/docs/")]
-          print(f"{wheel}: OK ({len(docs)} bundled docs)")
+          templates = [n for n in names if n.startswith("docsviewer/templates/")]
+          print(f"{wheel}: OK ({len(templates)} bundled templates)")
           PY
 
       - name: Smoke test the built wheel
